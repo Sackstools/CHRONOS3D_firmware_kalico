@@ -16,8 +16,10 @@ class error(Exception):
     pass
 
 
-# Minimum time host needs to get scheduled events queued into mcu
-MIN_SCHEDULE_TIME = 0.100
+# High-performance MCU scheduling parameters
+# MIN_SCHEDULE_TIME: Reduced minimum scheduling horizon for lower latency
+# while maintaining safe margin for command queuing (80ms instead of 100ms)
+MIN_SCHEDULE_TIME = 0.080
 # The maximum number of clock cycles an MCU is expected
 # to schedule into the future, due to the protocol and firmware.
 MAX_SCHEDULE_TICKS = (1 << 31) - 1

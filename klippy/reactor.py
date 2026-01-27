@@ -182,7 +182,9 @@ class SelectReactor:
                     self._last_gc_times[gc_level] = eventtime
                     gc.collect(gc_level)
                     return 0.0
-            return min(1.0, max(0.001, self._next_timer - eventtime))
+            # Optimized: reduced max sleep from 1.0s to 0.5s for faster response
+            # and min sleep from 0.001s to 0.0005s for tighter timing precision
+            return min(0.5, max(0.0005, self._next_timer - eventtime))
         self._next_timer = self.NEVER
         g_dispatch = self._g_dispatch
         for t in self._timers:
@@ -473,9 +475,16 @@ class EPollReactor(SelectReactor):
         self._g_dispatch = None
 
 
-# Use the poll based reactor if it is available
+# Use the highest-performance reactor available
+# Priority: EPoll (Linux) > Poll > Select
+# EPoll has O(1) scalability with number of file descriptors
+# and lower system call overhead compared to poll/select
 try:
-    select.poll
-    Reactor = PollReactor
-except:
-    Reactor = SelectReactor
+    select.epoll
+    Reactor = EPollReactor
+except AttributeError:
+    try:
+        select.poll
+        Reactor = PollReactor
+    except AttributeError:
+        Reactor = SelectReactor

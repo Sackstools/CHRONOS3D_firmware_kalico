@@ -36,8 +36,9 @@ periodic_event(struct timer *t)
 {
     // Make sure the stats task runs periodically
     sched_wake_tasks();
-    // Reschedule timer
-    periodic_timer.waketime += timer_from_us(100000);
+    // Reschedule timer - reduced from 100ms to 50ms for lower latency
+    // This provides more responsive task scheduling and statistics updates
+    periodic_timer.waketime += timer_from_us(50000);
     sentinel_timer.waketime = periodic_timer.waketime + 0x80000000;
     return SF_RESCHEDULE;
 }
