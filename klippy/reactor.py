@@ -182,8 +182,11 @@ class SelectReactor:
                     self._last_gc_times[gc_level] = eventtime
                     gc.collect(gc_level)
                     return 0.0
-            # Optimized: reduced max sleep from 1.0s to 0.5s for faster response
-            # and min sleep from 0.001s to 0.0005s for tighter timing precision
+            # Optimized timer sleep bounds for lower latency:
+            # - Max sleep reduced from 1.0s to 0.5s for faster event response
+            # - Min sleep reduced from 1ms to 0.5ms for tighter timing precision
+            # Note: Reduced min sleep doubles max wake frequency but improves
+            # responsiveness for time-critical operations like motion control
             return min(0.5, max(0.0005, self._next_timer - eventtime))
         self._next_timer = self.NEVER
         g_dispatch = self._g_dispatch

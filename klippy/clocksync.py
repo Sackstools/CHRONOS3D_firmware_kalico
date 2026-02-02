@@ -9,14 +9,14 @@ import traceback
 
 # High-performance clock synchronization parameters
 # RTT_AGE: Aging factor for RTT samples - increased for faster adaptation
-# to network/USB latency changes (2x faster than original)
+# to network/USB latency changes (2x faster than original: 2.78e-9 → 5.56e-9)
 RTT_AGE = 2.0e-5 / 3600.0  # 2x the original value for faster aging
 # DECAY: Linear regression decay rate - increased for faster clock frequency
 # adaptation to thermal drift and oscillator changes (was 1/30, now 1/25)
 DECAY = 1.0 / 25.0
 # TRANSMIT_EXTRA: Reduced transmit latency headroom for tighter timing
 # (0.8ms instead of 1ms provides better responsiveness)
-TRANSMIT_EXTRA = 0.8e-3  # 0.8 milliseconds
+TRANSMIT_EXTRA = 0.0008  # 0.8 milliseconds
 
 
 class ClockSync:
