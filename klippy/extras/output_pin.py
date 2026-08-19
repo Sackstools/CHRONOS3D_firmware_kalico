@@ -1,6 +1,6 @@
 # PWM and digital output pin handling
 #
-# Copyright (C) 2017-2024  Kevin O'Connor <kevin@koconnor.net>
+# Copyright (C) 2017-2025  Kevin O'Connor <kevin@koconnor.net>
 #
 # This file may be distributed under the terms of the GNU GPLv3 license.
 import ast
@@ -198,8 +198,6 @@ def lookup_template_eval(config):
 # Main output pin handling
 ######################################################################
 
-MAX_SCHEDULE_TIME = 5.0
-
 
 class PrinterOutputPin:
     def __init__(self, config):
@@ -209,8 +207,9 @@ class PrinterOutputPin:
         self.is_pwm = config.getboolean("pwm", False)
         if self.is_pwm:
             self.mcu_pin = ppins.setup_pin("pwm", config.get("pin"))
+            max_duration = self.mcu_pin.get_mcu().max_nominal_duration()
             cycle_time = config.getfloat(
-                "cycle_time", 0.100, above=0.0, maxval=MAX_SCHEDULE_TIME
+                "cycle_time", 0.100, above=0.0, maxval=max_duration
             )
             hardware_pwm = config.getboolean("hardware_pwm", False)
             self.mcu_pin.setup_cycle_time(cycle_time, hardware_pwm)
