@@ -198,6 +198,7 @@ def lookup_template_eval(config):
 # Main output pin handling
 ######################################################################
 
+
 class PrinterOutputPin:
     def __init__(self, config):
         self.printer = config.get_printer()
