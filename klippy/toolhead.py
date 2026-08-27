@@ -142,7 +142,10 @@ class Move:
         self.decel_t = decel_d / ((end_v + cruise_v) * 0.5)
 
 
-LOOKAHEAD_FLUSH_TIME = 0.250
+# Lookahead flush time - optimized for balance between junction planning
+# and latency. Reduced from 0.250s to 0.200s for faster response while
+# still allowing sufficient time for junction velocity optimization.
+LOOKAHEAD_FLUSH_TIME = 0.200
 
 
 # Class to track a list of pending move requests and to facilitate
@@ -238,19 +241,22 @@ class LookAheadQueue:
         return self.junction_flush <= 0.0
 
 
-BUFFER_TIME_LOW = 1.0
-BUFFER_TIME_HIGH = 2.0
-BUFFER_TIME_START = 0.250
-BGFLUSH_LOW_TIME = 0.200
-BGFLUSH_BATCH_TIME = 0.200
-MIN_KIN_TIME = 0.100
-MOVE_BATCH_TIME = 0.500
-STEPCOMPRESS_FLUSH_TIME = 0.050
-SDS_CHECK_TIME = 0.001  # step+dir+step filter in stepcompress.c
-MOVE_HISTORY_EXPIRE = 30.0
+# High-performance buffer timing parameters
+# Optimized for lower latency while maintaining stability
+BUFFER_TIME_LOW = 0.8        # Reduced from 1.0 for faster response
+BUFFER_TIME_HIGH = 1.5       # Reduced from 2.0 for lower latency
+BUFFER_TIME_START = 0.200    # Reduced from 0.250 for faster startup
+BGFLUSH_LOW_TIME = 0.150     # Reduced from 0.200 for more responsive flushing
+BGFLUSH_BATCH_TIME = 0.150   # Reduced from 0.200 for smaller batch latency
+MIN_KIN_TIME = 0.080         # Reduced from 0.100 for tighter kinematics timing
+MOVE_BATCH_TIME = 0.400      # Reduced from 0.500 for more frequent processing
+STEPCOMPRESS_FLUSH_TIME = 0.040  # Reduced from 0.050 for faster step flushing
+SDS_CHECK_TIME = 0.001       # step+dir+step filter in stepcompress.c (unchanged)
+MOVE_HISTORY_EXPIRE = 30.0   # Move history expiry (unchanged)
 
-DRIP_SEGMENT_TIME = 0.050
-DRIP_TIME = 0.100
+# Drip mode timing - optimized for precision moves
+DRIP_SEGMENT_TIME = 0.040    # Reduced from 0.050 for finer segments
+DRIP_TIME = 0.080            # Reduced from 0.100 for faster drip response
 
 
 # Main code to track events (and their timing) on the printer toolhead
